@@ -1,0 +1,25 @@
+Enumerate Scheduled Tasks
+
+Get-ScheduledTask
+Lists all scheduled tasks on the system.
+
+Export-ScheduledTask
+Exports the definition of a scheduled task for review or backup.
+
+Get-ScheduledTaskInfo
+Displays runtime information about scheduled tasks, including last run time and next run time.
+
+Filter and Inspect Specific Scheduled Tasks
+
+Get-ScheduledTask Program | Select-Object -Property TaskName
+Filters scheduled tasks with names containing "Program" and displays their names.
+
+Export-ScheduledTask -TaskName 'ProgramUpdate'
+Exports the definition of the 'ProgramUpdate' scheduled task for analysis.
+
+Get-ScheduledTaskInfo -TaskName 'ProgramUpdate' | Select-Object LastRunTime
+Shows the last run time of the 'ProgramUpdate' task.
+
+Unregister-ScheduledTask -TaskName "Suspicious"
+
+SOC Use Case: Scheduled tasks are commonly abused for persistence. Monitoring and exporting tasks allows analysts to detect malicious or unauthorized jobs that automatically execute malware or scripts.

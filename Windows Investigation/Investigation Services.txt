@@ -1,0 +1,22 @@
+List All Services
+
+Get-Service
+Displays all services on the local system.
+
+Get-Service ServiceName
+Shows details for a specific service by name.
+
+Detailed Service Information
+
+Get-CimInstance -Class Win32_Service | Format-List Name, Caption, Description, PathName
+Provides detailed information about all services, including their display name, description, and executable path.
+
+Stop-Service -Name Suspicious
+Get-Service Suspicious | Stop-Process
+
+Remove-Item C:\Windows\suspicious_file_path
+
+SOC Use Case: Monitoring Windows services helps detect unauthorized or suspicious services that may indicate malware persistence or system tampering. Reviewing the executable path can reveal malicious binaries masquerading as legitimate services.
+
+Remove-CimInstance : Get-CimInstance -ClassName Win32_Service -Filter "Name='suspicious'"
+sc.exe delete suspicious

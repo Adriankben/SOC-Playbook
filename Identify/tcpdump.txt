@@ -1,0 +1,91 @@
+TCPDump Advanced Cheat Sheet
+
+1. Interface & Basic Capture
+tcpdump -D                  # List interfaces
+tcpdump -i eth0             # Listen on specific interface
+tcpdump -i any              # Listen on all interfaces
+tcpdump -nn                 # No DNS or port resolution
+tcpdump -e                  # Show MAC addresses
+tcpdump -v / -vv / -vvv     # Verbosity levels
+
+2. Capture Control
+tcpdump -c 100              # Stop after 100 packets
+tcpdump -s 0                # Capture full packet
+tcpdump -w file.pcap         # Save capture to file
+tcpdump -r file.pcap         # Read from file
+tcpdump -C 100 -W 10 -w file.pcap  # Rotate: 100MB files, 10 max
+tcpdump -G 3600 -w 'file-%Y-%m-%d_%H:%M:%S.pcap' # Hourly rotate
+
+3. Host / Port / Protocol Filtering
+# Hosts
+tcpdump host 10.0.0.5
+tcpdump src 10.0.0.5
+tcpdump dst 10.0.0.5
+tcpdump not host 10.0.0.5
+
+# Ports
+tcpdump port 443
+tcpdump src port 22
+tcpdump dst port 3389
+
+# Protocols
+tcpdump tcp
+tcpdump udp
+tcpdump icmp
+
+# Combined
+tcpdump tcp port 443 and host 10.0.0.5
+tcpdump 'src net 10.0.0.0/8 and dst port 443'
+
+4. Advanced TCP Flags
+# SYN only
+tcpdump 'tcp[tcpflags] & tcp-syn != 0'
+
+# SYN+ACK
+tcpdump 'tcp[tcpflags] & (tcp-syn|tcp-ack) == (tcp-syn|tcp-ack)'
+
+# FIN
+tcpdump 'tcp[tcpflags] & tcp-fin != 0'
+
+5. Payload & ASCII Inspection
+tcpdump -A                 # ASCII only
+tcpdump -X                 # Hex + ASCII
+tcpdump -XX                # Ethernet headers + Hex + ASCII
+tcpdump -tttt              # Full timestamp
+tcpdump -tttttt            # Microsecond precision
+
+# Example: HTTP GET requests
+tcpdump -i eth0 -s 0 -A 'tcp port 80 and (((ip[2:2]-((ip[0]&0xf)<<2))-((tcp[12]&0xf0)>>2)) !=0)'
+
+6. Performance & Buffering
+tcpdump -B 4096            # Increase buffer size in KB
+tcpdump -i eth0 -s 0 -w file.pcap -nn  # High-performance capture
+
+7. Security / IR Use Cases
+# Detect SYN scans
+tcpdump 'tcp[tcpflags] & tcp-syn != 0'
+
+# SSH brute force
+tcpdump -nn port 22
+
+# Malware C2 traffic
+tcpdump host <C2_IP> and port 443
+
+# Non-local traffic
+tcpdump not src net 192.168.1.0/24
+
+8. Complex Expressions
+# Subnet filters
+tcpdump net 192.168.1.0/24
+
+# Multiple hosts
+tcpdump host 10.0.0.5 or host 10.0.0.6
+
+# Exclude hosts
+tcpdump not host 10.0.0.5
+
+# Combine filters
+tcpdump 'tcp[tcpflags] & tcp-syn != 0 and src net 10.0.0.0/8 and dst port 443'
+
+
+Tip: Always combine -s 0 + -nn for IR or forensic captures. Use file rotation (-C/-G) on long-running captures to prevent disk overload.

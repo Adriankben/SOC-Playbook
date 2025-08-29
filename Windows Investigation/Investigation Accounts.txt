@@ -1,0 +1,24 @@
+List All Local Users
+
+Get-LocalUser
+
+SOC Use Case: Provides visibility into all accounts on the system. Useful for detecting unauthorized or hidden accounts created by an attacker.
+
+List Enabled Local Users
+
+Get-LocalUser | Where-Object { $_.Enabled -eq $True }
+Get-LocalUser | Where-Object 'Enabled' -eq $True
+
+SOC Use Case: Focuses on active accounts that could be leveraged by an attacker. Helps identify dormant accounts that were re-enabled or suspicious accounts with access.
+
+List All Local Groups
+
+Get-LocalGroup
+
+SOC Use Case: Displays all groups on the system. Useful for checking if unexpected groups have been created to escalate privileges.
+
+List Members of the Administrators Group
+
+Get-LocalGroupMember Administrators
+
+SOC Use Case: Identifies which accounts have administrative rights. Attackers often add their accounts or backdoor accounts to the Administrators group for persistence and elevated access.

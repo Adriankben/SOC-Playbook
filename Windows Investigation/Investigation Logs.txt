@@ -1,0 +1,42 @@
+# Export baseline lists of services, scheduled tasks, and local users
+Get-Service | Select-Object -ExpandProperty Name | Out-File "baseline/services.txt"
+Get-ScheduledTask | Select-Object -ExpandProperty TaskName | Out-File "baseline/scheduledtasks.txt"
+Get-LocalUser | Select-Object -ExpandProperty Name | Out-File "baseline/localusers.txt"
+
+
+Service Baseline vs Live Investigation
+
+Get-Service > baseline-services.txt
+Get-Service > services-liveinvestigation.txt
+
+$baseline = Get-Content .\baseline-services.txt
+$current = Get-Content .\services-liveinvestigation.txt
+
+Compare-Object $baseline $current
+
+Get-NetTCPConnection -State Listen | Out-File tcpports-current.txt
+
+Notes:
+
+Use the SideIndicator column in the output to identify changes
+<= : Present in baseline, missing in current
+=> : Present in current, not in baseline
+
+SOC Use Case: Helps detect persistence techniques where attackers install or modify Windows services. Comparing current vs baseline services can reveal unauthorized or suspicious additions.
+
+Security Log Review (Custom Timeframe)
+
+$start = Get-Date "06/05/2025"
+$end = Get-Date "06/21/2025"
+
+# Retrieve Security event logs for the specified timeframe
+Get-WinEvent -FilterHashtable @{LogName='Security'; StartTime=$start; EndTime=$end}
+
+SOC Use Case: Allows analysts to focus on a specific timeframe when investigating incidents, such as user logons, privilege escalations, or access attempts during a known compromise window.
+
+Detect New Services Installed (Event ID 7045)
+
+Get-WinEvent -LogName System | Where-Object -Property Id -EQ 7045 |
+Format-List -Property TimeCreated, Message
+
+SOC Use Case: Event ID 7045 is triggered when a new service is installed on a Windows system. Attackers often use this for persistence. Reviewing this event helps detect unauthorized services or malware disguised as legitimate services.

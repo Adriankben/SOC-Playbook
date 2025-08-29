@@ -1,0 +1,2 @@
+nmap IP -oN scanresults.txt
+nmap IP -oN scanresults.txt -oG

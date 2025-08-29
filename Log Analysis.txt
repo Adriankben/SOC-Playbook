@@ -1,0 +1,7 @@
+Timing analysis
+how  often etc
+awk '{print 5}' wordpress.log
+
+IP Analysis
+failed login
+awk '{print 5}' wordpress.log | sort | uniq -c 

@@ -1,0 +1,81 @@
+Process Enumeration with Get-Process
+
+Get-Process
+
+Retrieves brief information about all running processes.
+
+Get-Process | Select-Object -Property Path, Name, Id
+
+Shows the executable path, process name, and process ID for all processes.
+
+Get-Process | Select-Object -Property Path, Name, Id | Where-Object -Property Name -eq explorer
+
+Filters to show only processes with the name explorer.
+
+Get-Process | Select-Object -Property Path, Name, Id | Where-Object -Property Path -Like "temp"
+
+Filters processes whose executable path contains the word temp.
+
+Wildcard (*) Explanation:
+
+* matches zero or more characters.
+
+Example:
+
+Get-Process 'lsass*' matches lsass or lsass-helper.
+
+Where-Object Path -Like "*temp*" matches any path containing temp anywhere.
+
+Get-Process 'lsass'*
+
+Retrieves brief information about a named process using a wildcard.
+
+**Get-Process 'lsass' | Select-Object ***
+
+Provides detailed information about the lsass process.
+
+**Get-Process 'lsass' | Select-Object -First 1 ***
+
+Limits the output to the first matching object.
+
+Get-Process -ComputerName FLL-HQ-DEFAULT
+
+Queries processes running on a remote system.
+
+SOC Use Case:
+
+Detects suspicious or unexpected processes.
+
+Attackers may inject into or mimic critical processes (like lsass) to dump credentials or maintain persistence.
+
+Monitoring processes across remote hosts helps detect lateral movement.
+
+Process Enumeration with Get-CimInstance
+
+Get-CimInstance -Class Win32_Process | Select-Object ProcessId, ProcessName, CommandLine
+
+Retrieves process IDs, names, and command lines.
+
+Get-CimInstance -Class Win32_Process | Where-Object -Property ParentProcessId -EQ 644
+
+Filters processes by their parent process ID.
+
+Get-CimInstance -Class Win32_Process | Where-Object -Property ParentProcessId -EQ 644 | Stop-Process
+
+Stops all processes spawned by a specific parent process.
+
+Get-CimInstance -Class Win32_Process | Where-Object -Property ProcessId -EQ 1740 | Select-Object -Property ParentProcessId
+
+Retrieves the parent process ID of a specific process.
+
+Get-CimInstance -Class Win32_Process | Where-Object -Property ProcessId -EQ 1740 | Select-Object -ExpandProperty CommandLine
+
+Retrieves the full command line used to launch a specific process.
+
+SOC Use Case:
+
+Provides visibility into how processes were executed via command line.
+
+Detects abuse of legitimate binaries (LOLBins) with malicious arguments.
+
+Parent process analysis helps detect anomalies, such as PowerShell spawned from Word or unusual child processes under lsass.

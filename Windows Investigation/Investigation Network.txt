@@ -1,0 +1,36 @@
+List All TCP Connections
+
+Get-NetTCPConnection
+
+SOC Use Case: Provides a full list of all TCP connections on the host. Useful for detecting suspicious remote connections or lateral movement.
+
+List Listening TCP Ports
+
+Get-NetTCPConnection -State Listen | Select-Object -Property LocalAddress, LocalPort, OwningProcess
+
+SOC Use Case: Shows all ports currently listening for inbound connections. Attackers may set up backdoors or unauthorized services that bind to unusual ports.
+
+Check Connections to a Specific Remote Address
+
+Get-NetTCPConnection -RemoteAddress 13.13.13.1 | Select-Object CreationTime, LocalAddress, LocalPort, RemoteAddress, RemotePort, OwningProcess, State
+
+SOC Use Case: Focuses on connections to a specific IP of interest (e.g., known malicious IP, C2 server). Helps identify when the connection started and what process owns it.
+
+Identify Process Behind a TCP Connection
+
+Once you have the process ID (OwningProcess), you can look up the process name:
+
+Get-Process -Id <processID>
+
+SOC Use Case: Maps network connections to the actual process. Critical for confirming whether the connection is tied to a legitimate service or a suspicious/malicious process.
+
+Combine TCP Connection Data with Process Names
+
+Get-NetTCPConnection | Select-Object LocalAddress, LocalPort, RemoteAddress, RemotePort, State, @{Name='Process'; Expression={(Get-Process -Id $_.OwningProcess).ProcessName}} | Format-Table
+
+SOC Use Case: Displays all TCP connections alongside the owning process name. Provides quick correlation between network activity and the process responsible, helping detect malware or unauthorized tools making outbound connections.
+
+
+Get-NetTCPConnection -State Listen | Where-Object -Property LocalPort -EQ portnumber | Select-Object -Property OwningProcess
+
+Get-NetTCPConnection -State Listen | Where-Object -Property OwningProcess -EQ portnumber | Select-Object LocalPort

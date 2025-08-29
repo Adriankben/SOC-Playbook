@@ -1,0 +1,54 @@
+Enumerate Installed Software via Registry
+
+Get-ChildItem 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall' | Select-Object PSChildName
+
+Lists all subkeys under the Uninstall path, corresponding to installed software.
+
+Set-Location 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall'
+
+Changes location to the Uninstall registry path.
+
+Get-ChildItem
+
+Lists all installed software entries under the current registry path.
+
+SOC Use Case:
+
+Detects unauthorized or malicious applications.
+
+Attackers often install persistence tools or malware that show up in the registry.
+
+View Auto-Start Programs
+
+Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run'
+Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce'
+Get-ItemProperty 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run'
+Get-ItemProperty 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce'
+
+Lists programs configured to start automatically at system boot.
+
+Remove Suspicious Auto-Start Items
+
+Remove-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name "Suspicious"
+
+Removes a suspicious entry from the Run key.
+
+Get-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run\Suspicious"
+
+Confirms the presence or removal of a specific entry.
+
+Remove-Item $env:temp\suspicious.exe
+
+Deletes a suspicious executable from the Temp directory.
+
+Get-ChildItem $env:temp\suspicious.exe
+
+Checks whether the file still exists.
+
+SOC Use Case:
+
+Identifying startup programs is critical for detecting persistence mechanisms.
+
+Malware frequently uses Run keys to automatically execute on reboot.
+
+Analysts can remove malicious startup entries and associated files to remediate threats.
