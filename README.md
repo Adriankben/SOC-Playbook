@@ -8,6 +8,7 @@ Command references and step-by-step procedures for SOC triage, phishing analysis
 |---|---|
 | `Identify/` | Network discovery and packet capture with nmap and tcpdump |
 | `Phishing/` | Email header examination, content examination, and static malware analysis |
+| `Malware Analysis/` | Static analysis of Windows executables: file identification, PE headers, hashing, string extraction and decoding, API review, and reporting |
 | `Windows Investigation/` | Host investigation of accounts, processes, services, scheduled tasks, registry, network connections, and logs |
 | `Log Analysis/` | Reviewing and correlating logs during an investigation |
 
